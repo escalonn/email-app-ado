@@ -21,6 +21,6 @@ steps:
   displayName: ng build
   workingDirectory: $(appDir)
 
-- script: npx ng test --browsers ChromeHeadless
+- script: npx ng test --browsers ChromeHeadless --watch false
   displayName: ng test
   workingDirectory: $(appDir)
