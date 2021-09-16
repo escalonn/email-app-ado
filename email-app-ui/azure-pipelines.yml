@@ -1,0 +1,26 @@
+trigger:
+- master
+
+variables:
+  appDir: email-app-ui
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- task: NodeTool@0
+  displayName: node 14
+  inputs:
+    versionSpec: '14.x'
+
+- script: npm ci
+  displayName: npm install
+  workingDirectory: $(appDir)
+
+- script: npx ng build
+  displayName: ng build
+  workingDirectory: $(appDir)
+
+- script: npx ng test --browsers ChromeHeadless
+  displayName: ng test
+  workingDirectory: $(appDir)
