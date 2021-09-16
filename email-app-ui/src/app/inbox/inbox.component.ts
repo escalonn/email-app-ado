@@ -28,7 +28,6 @@ export class InboxComponent implements OnInit {
       (messages) => {
         // subscribe is (to simplify) like Promise.then
         this.messages = messages;
-
         // this (or rather in the service) would be a good place for some validation at runtime
         // to ensure the data coming from the backend matches expectations
       },

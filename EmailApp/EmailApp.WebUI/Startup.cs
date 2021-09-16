@@ -51,6 +51,15 @@ namespace EmailApp.WebUI
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "EmailApp.WebUI", Version = "v1" });
             });
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowNgServe", policy =>
+                    policy.WithOrigins("http://localhost:4200")
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials());
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -66,7 +75,8 @@ namespace EmailApp.WebUI
 
             app.UseRouting();
 
-            app.UseCors();
+            // applies CORS policy to all action methods
+            app.UseCors("AllowNgServe");
 
             app.UseAuthentication();
             app.UseAuthorization();
