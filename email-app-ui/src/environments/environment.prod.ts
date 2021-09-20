@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  emailApiBaseUrl: 'https://localhost:44317',
+  emailApiBaseUrl: 'https://2107-escalona-emailapp.azurewebsites.net',
 };

@@ -55,7 +55,8 @@ namespace EmailApp.WebUI
             services.AddCors(options =>
             {
                 options.AddPolicy("AllowNgServe", policy =>
-                    policy.WithOrigins("http://localhost:4200")
+                    policy.WithOrigins("http://localhost:4200",
+                                       "https://2107-escalona-email-app-ui.azurewebsites.net")
                         .AllowAnyMethod()
                         .AllowAnyHeader()
                         .AllowCredentials());
