@@ -1,5 +1,18 @@
 trigger:
-- master
+  branches:
+    include:
+    - master
+  paths:
+    include:
+    - email-app-ui
+
+pr:
+  branches:
+    include:
+    - master
+  paths:
+    include:
+    - email-app-ui
 
 variables:
   appDir: email-app-ui
@@ -21,6 +34,24 @@ steps:
   displayName: ng build
   workingDirectory: $(appDir)
 
-- script: npx ng test --browsers ChromeHeadless --watch false
+- script: npx ng test --browsers ChromeHeadless --watch false --code-coverage
   displayName: ng test
   workingDirectory: $(appDir)
+
+- task: SonarCloudPrepare@1
+  inputs:
+    SonarCloud: 'sonarcloud-escalonn'
+    organization: '210726-wvu-net-ext'
+    scannerMode: 'CLI'
+    configMode: 'manual'
+    cliProjectKey: '210726-wvu-net-ext_nick-project2_email-app-ui'
+    cliSources: '$(appDir)/src'
+    extraProperties: 'sonar.javascript.lcov.reportPaths=$(appDir)/coverage/$(appDir)/lcov.info'
+
+- task: SonarCloudAnalyze@1
+  displayName: sonar run analysis
+
+- task: SonarCloudPublish@1
+  displayName: sonar publish analysis result
+  inputs:
+    pollingTimeoutSec: '300'
