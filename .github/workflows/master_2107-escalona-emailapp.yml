@@ -7,11 +7,18 @@ on:
   push:
     branches:
       - master
+    paths:
+      - '.github/workflows/master_2107-escalona-emailapp.yml'
+      - 'EmailApp/**'
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: windows-latest
+
+    defaults:
+      run:
+        working-directory: EmailApp
 
     steps:
       - uses: actions/checkout@v2
