@@ -21,10 +21,10 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have as title 'email-ui'`, () => {
+  it(`should have as title 'email-app-ui'`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('email-ui');
+    expect(app.title).toEqual('email-app-ui');
   });
 
   it('should have navbar component', () => {

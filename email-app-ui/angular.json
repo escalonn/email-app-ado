@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "email-ui": {
+    "email-app-ui": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:application": {
@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/email-ui",
+            "outputPath": "dist/email-app-ui",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -63,14 +63,14 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "email-ui:build"
+            "browserTarget": "email-app-ui:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "email-ui:build:production"
+              "browserTarget": "email-app-ui:build:production"
             },
             "development": {
-              "browserTarget": "email-ui:build:development"
+              "browserTarget": "email-app-ui:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -78,7 +78,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "email-ui:build"
+            "browserTarget": "email-app-ui:build"
           }
         },
         "test": {
@@ -102,5 +102,5 @@
       }
     }
   },
-  "defaultProject": "email-ui"
+  "defaultProject": "email-app-ui"
 }

@@ -16,5 +16,5 @@ import { Component } from '@angular/core';
   // animations: [] // angular animations is a thing
 })
 export class AppComponent {
-  title = 'email-ui';
+  title = 'email-app-ui';
 }
