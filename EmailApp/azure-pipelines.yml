@@ -1,7 +1,7 @@
 trigger:
   branches:
     include:
-    - main
+    - master
   paths:
     include:
     - EmailApp
@@ -9,7 +9,7 @@ trigger:
 pr:
   branches:
     include:
-    - main
+    - master
   paths:
     include:
     - EmailApp
