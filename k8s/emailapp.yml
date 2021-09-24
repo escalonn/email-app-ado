@@ -22,7 +22,7 @@ metadata: # all k8s have metadata, usually name and labels
     app: email
     role: api
 spec: # every object has a specification
-  replicas: 2
+  replicas: 1
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -45,6 +45,10 @@ spec: # every object has a specification
         env:
         - name: CorsOrigins__3
           value: http://localhost:30001
+        - name: ConnectionString
+          value: PostgresEmailDb
+        - name: ConnectionStrings__PostgresEmailDb
+          value: Host=email-db;Database=postgres;Username=postgres;Password=Pass@word
         ports:
         - containerPort: 80
         resources:

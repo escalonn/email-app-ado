@@ -1,0 +1,49 @@
+﻿apiVersion: v1
+kind: Service
+metadata:
+  name: email-db
+  labels:
+    app: email
+    role: db
+spec:
+  type: ClusterIP
+  selector:
+    app: email
+    role: db
+  ports:
+  - port: 5432
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: email-db
+  labels:
+    app: email
+    role: db
+spec:
+  selector:
+    matchLabels:
+      app: email
+      role: db
+  template:
+    metadata:
+      labels:
+        app: email
+        role: db
+    spec:
+      containers:
+      - name: db
+        image: postgres:13
+        imagePullPolicy: Always # whether to check for a new image if the pod needs to be recreated
+        env:
+        - name: POSTGRES_PASSWORD
+          value: Pass@word
+        ports:
+        - containerPort: 5432
+        resources:
+          requests:
+            memory: '512Mi'
+            cpu: '200m'
+          limits:
+            memory: '1Gi'
+            cpu: '1000m'
