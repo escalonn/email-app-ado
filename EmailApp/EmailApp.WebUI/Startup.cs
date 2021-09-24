@@ -27,10 +27,18 @@ namespace EmailApp.WebUI
 
         public void ConfigureServices(IServiceCollection services)
         {
-            string connectionString = Configuration.GetConnectionString("SqliteEmailDb");
+            string connectionStringName = Configuration["ConnectionString"];
+            string connectionString = Configuration.GetConnectionString(connectionStringName);
             services.AddDbContext<EmailContext>(options =>
             {
-                options.UseSqlite(connectionString);
+                if (connectionStringName == "SqliteEmailDb")
+                {
+                    options.UseSqlite(connectionString);
+                }
+                else
+                {
+                    options.UseNpgsql(connectionString);
+                }
             });
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
