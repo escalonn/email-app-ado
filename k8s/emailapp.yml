@@ -42,6 +42,9 @@ spec: # every object has a specification
       - name: api
         image: nicholasescalona/emailapp:1.0
         imagePullPolicy: Always # whether to check for a new image if the pod needs to be recreated
+        env:
+        - name: CorsOrigins__3
+          value: http://localhost:30001
         ports:
         - containerPort: 80
         resources:

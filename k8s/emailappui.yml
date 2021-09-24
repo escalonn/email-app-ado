@@ -1,0 +1,47 @@
+﻿apiVersion: v1
+kind: Service
+metadata:
+  name: email-app-ui
+  labels:
+    app: email
+    role: ui
+spec:
+  type: NodePort
+  selector:
+    app: email
+    role: ui
+  ports:
+  - port: 80
+    nodePort: 30001
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: email-app-ui
+  labels:
+    app: email
+    role: ui
+spec:
+  selector:
+    matchLabels:
+      app: email
+      role: ui
+  template:
+    metadata:
+      labels:
+        app: email
+        role: ui
+    spec:
+      containers:
+      - name: ui
+        image: nicholasescalona/email-app-ui:localhost30000
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            memory: '64Mi'
+            cpu: '100m'
+          limits:
+            memory: '128Mi'
+            cpu: '200m'

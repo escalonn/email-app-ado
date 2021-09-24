@@ -52,11 +52,15 @@ namespace EmailApp.WebUI
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "EmailApp.WebUI", Version = "v1" });
             });
 
+            var origins = Configuration.GetSection("CorsOrigins")
+                .GetChildren()
+                .Select(x => x.Value)
+                .ToArray();
+
             services.AddCors(options =>
             {
-                options.AddPolicy("AllowNgServe", policy =>
-                    policy.WithOrigins("http://localhost:4200",
-                                       "https://2107-escalona-email-app-ui.azurewebsites.net")
+                options.AddPolicy("AllowAngular", policy =>
+                    policy.WithOrigins(origins)
                         .AllowAnyMethod()
                         .AllowAnyHeader()
                         .AllowCredentials());
@@ -77,28 +81,10 @@ namespace EmailApp.WebUI
             app.UseRouting();
 
             // applies CORS policy to all action methods
-            app.UseCors("AllowNgServe");
+            app.UseCors("AllowAngular");
 
             app.UseAuthentication();
             app.UseAuthorization();
-
-            // if this is a new user, add him
-            app.Use(async (context, next) =>
-            {
-                // this could be a separate middleware class
-                // (more unit testable, could use constructor injection)
-                if (context.User.Identity.IsAuthenticated)
-                {
-
-                    var userAddress = context.User.FindFirstValue(ClaimTypes.NameIdentifier);
-                    var uow = context.RequestServices.GetRequiredService<IUnitOfWork>();
-                    if (await uow.AccountRepository.AddIfNotExistsAsync(userAddress))
-                    {
-                        await uow.SaveAsync();
-                    }
-                }
-                await next();
-            });
 
             app.UseEndpoints(endpoints =>
             {
