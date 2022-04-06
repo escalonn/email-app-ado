@@ -1,0 +1,82 @@
+trigger:
+  branches:
+    include:
+    - master
+  paths:
+    include:
+    - EmailApp
+
+pr:
+  branches:
+    include:
+    - master
+  paths:
+    include:
+    - EmailApp
+
+variables:
+  slnPath: EmailApp
+
+stages:
+- stage: build
+  jobs:
+  - job: build
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+    - task: UseDotNet@2
+      displayName: dotnet sdk 5
+      inputs:
+        packageType: 'sdk'
+        version: '5.x'
+
+    # for sonar scanner
+    - task: UseDotNet@2
+      displayName: dotnet runtime 3.1
+      inputs:
+        packageType: 'runtime'
+        version: '3.1.x'
+
+    - task: SonarCloudPrepare@1
+      displayName: sonar prepare
+      inputs:
+        SonarCloud: 'sonarcloud-escalonn'
+        organization: '210726-wvu-net-ext'
+        scannerMode: 'MSBuild'
+        projectKey: '210726-wvu-net-ext_nick-project2_emailapp'
+        extraProperties: |
+          sonar.cs.opencover.reportsPaths=$(Agent.TempDirectory)/*/coverage.opencover.xml
+
+    - script: dotnet build --configuration Release
+      displayName: dotnet build
+      workingDirectory: $(slnPath)
+
+    - script: dotnet test
+        --configuration Release
+        --collect:"XPlat Code Coverage"
+        --results-directory $(Agent.TempDirectory)
+        --
+        DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+      displayName: dotnet test
+      workingDirectory: $(slnPath)
+
+    - task: SonarCloudAnalyze@1
+      displayName: sonar analyze
+
+    - task: SonarCloudPublish@1
+      displayName: sonar publish gate
+      inputs:
+        pollingTimeoutSec: '300'
+
+    - script: dotnet publish
+        --configuration Release
+        --output $(Build.StagingDirectory)
+      displayName: dotnet publish
+      workingDirectory: $(slnPath)
+
+    - publish: $(Build.StagingDirectory)
+      displayName: publish app artifact
+      artifact: app
+
+      # deploying to azure app service
+      # not working for me; relying on github actions
