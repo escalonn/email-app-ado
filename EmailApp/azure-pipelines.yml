@@ -1,0 +1,55 @@
+# https://aka.ms/yaml
+
+# things to watch out for in yaml:
+# indentation of anything
+# multiline string syntax https://revature-training-uta@dev.azure.com/revature-training-uta/email-app-2/_
+
+# this is just a txt file stored in your repo
+#   (all the advantages of IAC, infrastructure as code, apply)
+# you can edit it ahywhere/anyhow you want
+# this window on dev.azure.com is just an in-browser test editor that can commit to the repo.
+# i recommend working on the pipeline in the online editor because it will validate to to some extent
+# you'll get autocomplete/intellisense
+
+# every pipeline has:
+#   a trigger. when the pipeline will run. https://docs.microsoft.com/en-us/azure/devops/pipelines/yaml-schema/trigger
+
+# simple: a list of branches. also supported: pattern matching on branch names, whitelist/blacklist, filtering on
+# which path inside the branch was changed.
+trigger:
+  branches:
+    include:
+    - master
+  paths:
+    include:
+    - EmailApp
+# out of all the "build reasons" that can trigger a pipeline, we have:
+  # "Schedule": schedule builds at a regular interval
+  # "Manual": manually click the button yourself
+  # "IndividualCI", "BatchedCI": push to a particular branch (with changes to particular paths) (this one is managed by the "trigger" definition)
+  # "PullRequest": create/update a pull request targetting particular branches (for this one, the "pr" trigger for GitHub repos, something different for Azure Repos PRs)
+
+# once a pipeline is triggered, it has stages.
+# in the simple case, only one stage, implicit, named "build" by default.
+#   stages have jobs.
+#   a job is a unit of work scheduled on a build agent.
+#   in the simple case, only one job, implicit, named "build" by default.
+
+# these remaining properties are part of that default job.
+
+# a job needs to define what kind of build agent it can run on.
+# that is the "pool" definition. (you can specify defaults for "pool" at the stage or pipeline level though)
+# https://docs.microsoft.com/en-us/azure/devops/pipelines/yaml-schema/pool
+pool:
+  vmImage: ubuntu-latest
+
+# job defines steps. # steps run in sequence in the same folder on the agent filesystem.
+# by default, the first 
+steps:
+- script: echo Hello, world!
+  displayName: 'Run a one-line script'
+
+- script: |
+    echo Add other tasks to build, test, and deploy your project.
+    echo See https://aka.ms/yaml
+  displayName: 'Run a multi-line script'
