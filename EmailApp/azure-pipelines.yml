@@ -33,7 +33,7 @@ trigger:
 # in the simple case, only one stage, implicit, named "build" by default.
 #   stages have jobs.
 #   a job is a unit of work scheduled on a build agent.
-#   in the simple case, only one job, implicit, named "build" by default.
+#   in the simple case, only one job, implicit, named "Job" by default.
 
 # these remaining properties are part of that default job.
 
@@ -44,10 +44,14 @@ pool:
   vmImage: ubuntu-latest
 
 # job defines steps. # steps run in sequence in the same folder on the agent filesystem.
-# by default, the first 
+# when a job is scheduled on an agent:
+# 1. it will checkout your source code repository at the correct commit.
+#      all subsequent steps start in that directory.
+# 2. it will run each step. 
 steps:
 - script: echo Hello, world!
   displayName: 'Run a one-line script'
+  condition: 'false'
 
 - script: |
     echo Add other tasks to build, test, and deploy your project.
