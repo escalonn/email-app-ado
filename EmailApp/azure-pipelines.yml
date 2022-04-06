@@ -49,11 +49,15 @@ pool:
 #      all subsequent steps start in that directory.
 # 2. it will run each step. 
 steps:
-- script: echo Hello, world!
+- script: echo Hello, world! # for 'script' steps, the text of the script is put into a file and
+                             # that file is executed by cmd.exe on windows or bash elsewhere.
   displayName: 'Run a one-line script'
-  condition: 'false'
+  condition: 'succeeded()' # https://docs.microsoft.com/en-us/azure/devops/pipelines/process/conditions
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+# if the script has an nonzero exit code, that will indicate the step failed.
+# by default, if any step fails, subsequent steps are skipped, and the job fails, and the stage fails, and the overall run fails.
+# (ways to customize that: "condition", "continueOnError")
+# (watch out: in a multiline script, only the last command sets the exit code of the overall script)
+
+- script: dotnet build
+  displayName: 'Run a script'
