@@ -1,0 +1,86 @@
+# https://aka.ms/yaml
+
+# things to watch out for in yaml:
+# indentation of anything
+# multiline string syntax https://revature-training-uta@dev.azure.com/revature-training-uta/email-app-2/_
+
+# this is just a txt file stored in your repo
+#   (all the advantages of IAC, infrastructure as code, apply)
+# you can edit it ahywhere/anyhow you want
+# this window on dev.azure.com is just an in-browser test editor that can commit to the repo.
+# i recommend working on the pipeline in the online editor because it will validate to to some extent
+# you'll get autocomplete/intellisense
+
+# every pipeline has:
+#   a trigger. when the pipeline will run. https://docs.microsoft.com/en-us/azure/devops/pipelines/yaml-schema/trigger
+
+# simple: a list of branches. also supported: pattern matching on branch names, whitelist/blacklist, filtering on
+# which path inside the branch was changed.
+trigger:
+  branches:
+    include:
+    - master
+  paths:
+    include:
+    - EmailApp
+# out of all the "build reasons" that can trigger a pipeline, we have:
+  # "Schedule": schedule builds at a regular interval
+  # "Manual": manually click the button yourself
+  # "IndividualCI", "BatchedCI": push to a particular branch (with changes to particular paths) (this one is managed by the "trigger" definition)
+  # "PullRequest": create/update a pull request targetting particular branches (for this one, the "pr" trigger for GitHub repos, something different for Azure Repos PRs)
+
+# once a pipeline is triggered, it has stages.
+# in the simple case, only one stage, implicit, named "build" by default.
+#   stages have jobs.
+#   a job is a unit of work scheduled on a build agent.
+#   in the simple case, only one job, implicit, named "Job" by default.
+
+# these remaining properties are part of that default job.
+
+# a job needs to define what kind of build agent it can run on.
+# that is the "pool" definition. (you can specify defaults for "pool" at the stage or pipeline level though)
+# https://docs.microsoft.com/en-us/azure/devops/pipelines/yaml-schema/pool
+pool:
+  vmImage: ubuntu-latest
+
+# job defines steps. # steps run in sequence in the same folder on the agent filesystem.
+# when a job is scheduled on an agent:
+# 1. download all the tasks in this job that we need
+# 2. it will checkout your source code repository at the correct commit.
+#      all subsequent steps start in that directory.
+# 3. it will run each step. 
+steps:
+- script: echo Hello, world! # for 'script' steps, the text of the script is put into a file and
+                             # that file is executed by cmd.exe on windows or bash elsewhere.
+  displayName: Run a one-line script
+  condition: 'succeeded()' # https://docs.microsoft.com/en-us/azure/devops/pipelines/process/conditions
+
+# if the script has an nonzero exit code, that will indicate the step failed.
+# by default, if any step fails, subsequent steps are skipped, and the job fails, and the stage fails, and the overall run fails.
+# (ways to customize that: "condition", "continueOnError")
+# (watch out: in a multiline script, only the last command sets the exit code of the overall script)
+
+# kinds of steps: https://docs.microsoft.com/en-us/azure/devops/pipelines/yaml-schema/steps
+  # script
+  # powershell (run in powershell instead)
+  # pwsh (run in new powershell instead)
+  # bash (run in bash)
+
+  # the other main type of step is "task"
+  # a task is a encapsulated bit of functionality with inputs
+  #  (all the other kinds of step like "script" are actually just aliases for certain tasks)
+# a task is written in typescript and runs in node.js on the agent.
+# they are documented on docs.microsoft.com for the builtin tasks.
+# you can use the task assistant on the right side of the editor to help you
+# define tasks.
+
+# - script: dotnet build
+#   displayName: 'Run a script'
+#   workingDirectory: EmailApp
+
+- task: DotNetCoreCLI@2
+  displayName: dotnet build
+  inputs:
+    command: 'build'
+    projects: 'EmailApp'
+    arguments: '-c Release'
