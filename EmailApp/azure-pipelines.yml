@@ -61,3 +61,4 @@ steps:
 
 - script: dotnet build
   displayName: 'Run a script'
+  workingDirectory: EmailApp
