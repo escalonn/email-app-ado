@@ -80,7 +80,8 @@ steps:
 #   workingDirectory: EmailApp
 
 - task: DotNetCoreCLI@2
+  displayName: dotnet build
   inputs:
-    command: 'build'
+    command: 'restore'
     projects: 'EmailApp'
     arguments: '-c Release'
