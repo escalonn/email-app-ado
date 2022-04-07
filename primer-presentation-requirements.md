@@ -11,6 +11,7 @@ requirements for next week friday, individual presentation
 
 azure boards: pick a work item process, set up 10+ work items
     to essentially document the current state of the development
+make a dashboard
 azure repos: the code should be in 1 or more azure git repos.
     define a branching model for the project, document it in the README/CONTRIBUTING.md, and set up appropriate branch policies.
 azure pipelines
