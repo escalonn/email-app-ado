@@ -19,6 +19,11 @@ azure pipelines
         triggers, conditions, etc. should reflect the branching model
     CD: deploy to Azure Kubernetes Service (optionally with helm)
         manage azure resources with terraform (optionally: as a deployment step, not manually)
+        optional: stages with manual approval,
+            deploying to different namespaces in the cluster for staging/prod
     use azure pipelines features idiomatically
 optional: some thought into notifications (from any/all parts of the project)
 optional: break the pipeline(s) up into more reusable pieces using templates
+nice-to-have: attention paid to developers running the app locally,
+    with something convenient like docker compose, with a different database than the production one, etc.
+    (documented somewhere)
