@@ -37,15 +37,15 @@ stages:
     #     packageType: 'runtime'
     #     version: '3.1.x'
 
-    - task: SonarCloudPrepare@1
-      displayName: sonar prepare
-      inputs:
-        SonarCloud: 'sonarcloud-escalonn'
-        organization: '210726-wvu-net-ext'
-        scannerMode: 'MSBuild'
-        projectKey: '210726-wvu-net-ext_nick-project2_emailapp'
-        extraProperties: |
-          sonar.cs.opencover.reportsPaths=$(Agent.TempDirectory)/*/coverage.opencover.xml
+    # - task: SonarCloudPrepare@1
+    #   displayName: sonar prepare
+    #   inputs:
+    #     SonarCloud: 'sonarcloud-escalonn'
+    #     organization: '210726-wvu-net-ext'
+    #     scannerMode: 'MSBuild'
+    #     projectKey: '210726-wvu-net-ext_nick-project2_emailapp'
+    #     extraProperties: |
+    #       sonar.cs.opencover.reportsPaths=$(Agent.TempDirectory)/*/coverage.opencover.xml
 
     - script: dotnet build --configuration Release
       displayName: dotnet build
@@ -60,13 +60,13 @@ stages:
       displayName: dotnet test
       workingDirectory: $(slnPath)
 
-    - task: SonarCloudAnalyze@1
-      displayName: sonar analyze
+    # - task: SonarCloudAnalyze@1
+    #   displayName: sonar analyze
 
-    - task: SonarCloudPublish@1
-      displayName: sonar publish gate
-      inputs:
-        pollingTimeoutSec: '300'
+    # - task: SonarCloudPublish@1
+    #   displayName: sonar publish gate
+    #   inputs:
+    #     pollingTimeoutSec: '300'
 
     - script: dotnet publish
         --configuration Release
@@ -77,6 +77,31 @@ stages:
     - publish: $(Build.StagingDirectory)
       displayName: publish app artifact
       artifact: app
+
+  - job: deploy
+    dependsOn: build
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+    - task: Docker@2
+      displayName: docker build & push
+      inputs:
+        containerRegistry: 'docker-hub-escalona'
+        repository: 'nicholasescalona/emailapp'
+        command: 'buildAndPush'
+        Dockerfile: 'EmailApp/Dockerfile'
+        buildContext: 'EmailApp'
+        tags: |
+          $(Build.BuildId)
+          1.0
+
+    - task: KubernetesManifest@0
+      displayName: kubernetes deploy
+      inputs:
+        action: 'deploy'
+        kubernetesServiceConnection: 'aks-2204'
+        manifests: 'k8s'
 
       # deploying to azure app service
       # not working for me; relying on github actions
