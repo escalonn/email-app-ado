@@ -14,6 +14,12 @@ pr:
     include:
     - EmailApp
 
+parameters:
+  - name: runAnalysis
+    displayName: Run tests & SonarQube?
+    type: boolean
+    default: false
+
 variables:
   slnPath: EmailApp
 
@@ -21,7 +27,7 @@ stages:
 - stage: build
   jobs:
   - job: build
-    condition: 'False'
+    condition: ${{ parameters.runAnalysis }}
     pool:
       vmImage: ubuntu-latest
     steps:
@@ -80,7 +86,8 @@ stages:
       artifact: app
 
   - job: deploy
-    # dependsOn: build
+    ${{ if eq(parameters.runAnalysis, true) }}:
+      dependsOn: build
     condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
     pool:
       vmImage: ubuntu-latest
@@ -102,6 +109,3 @@ stages:
         kubernetesServiceConnection: 'aks-2204'
         manifests: 'k8s/*.yml'
         containers: 'nicholasescalona/emailapp:$(Build.BuildId)'
-
-      # deploying to azure app service
-      # not working for me; relying on github actions

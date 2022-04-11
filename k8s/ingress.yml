@@ -1,0 +1,17 @@
+﻿  apiVersion: networking.k8s.io/v1
+  kind: Ingress
+  metadata:
+    name: ingress-nginx
+  spec:
+    ingressClassName: nginx
+    rules:
+    - host: escalona-2204-training-aks.westus.cloudapp.azure.com
+      http:
+        paths:
+        - pathType: Prefix
+          backend:
+            service:
+              name: email-api
+              port:
+                number: 80
+          path: /api

@@ -6,7 +6,7 @@ metadata:
     app: email
     role: api
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   selector:
     app: email
     role: api

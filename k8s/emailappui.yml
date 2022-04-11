@@ -6,13 +6,12 @@ metadata:
     app: email
     role: ui
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: email
     role: ui
   ports:
   - port: 80
-    nodePort: 30001
 ---
 apiVersion: apps/v1
 kind: Deployment
