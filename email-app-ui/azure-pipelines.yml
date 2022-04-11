@@ -22,9 +22,9 @@ pool:
 
 steps:
 - task: NodeTool@0
-  displayName: node 14
+  displayName: node 16
   inputs:
-    versionSpec: '14.x'
+    versionSpec: '16.x'
 
 - script: npm ci
   displayName: npm install

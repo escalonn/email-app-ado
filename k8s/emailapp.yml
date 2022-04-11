@@ -6,13 +6,12 @@ metadata:
     app: email
     role: api
 spec:
-  type: NodePort
+  type: LoadBalancer
   selector:
     app: email
     role: api
   ports:
   - port: 80
-    nodePort: 30000
 ---
 apiVersion: apps/v1 # different k8s objects someties have surprisingly different apiversion
 kind: Deployment # what kind of object to create
