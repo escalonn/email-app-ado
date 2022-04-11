@@ -101,7 +101,7 @@ stages:
       inputs:
         action: 'deploy'
         kubernetesServiceConnection: 'aks-2204'
-        manifests: 'k8s'
+        manifests: 'k8s/*.yml'
 
       # deploying to azure app service
       # not working for me; relying on github actions
