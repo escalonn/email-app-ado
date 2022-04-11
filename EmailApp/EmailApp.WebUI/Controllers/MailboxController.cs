@@ -33,7 +33,7 @@ namespace EmailApp.WebUI.Controllers
                 Date = e.OrigDate,
                 From = e.From,
                 To = e.To,
-                Subject = e.Subject.ToUpper(),
+                Subject = e.Subject,
                 Body = e.Body
             }).ToList();
         }

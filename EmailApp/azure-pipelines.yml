@@ -93,9 +93,7 @@ stages:
         command: 'buildAndPush'
         Dockerfile: 'EmailApp/Dockerfile'
         buildContext: 'EmailApp'
-        tags: |
-          $(Build.BuildId)
-          1.0
+        tags: '$(Build.BuildId)'
 
     - task: KubernetesManifest@0
       displayName: kubernetes deploy
@@ -103,6 +101,7 @@ stages:
         action: 'deploy'
         kubernetesServiceConnection: 'aks-2204'
         manifests: 'k8s/*.yml'
+        containers: 'nicholasescalona/emailapp:$(Build.BuildId)'
 
       # deploying to azure app service
       # not working for me; relying on github actions
