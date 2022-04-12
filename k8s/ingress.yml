@@ -2,6 +2,8 @@
   kind: Ingress
   metadata:
     name: ingress-nginx
+    annotations:
+      nginx.ingress.kubernetes.io/rewrite-target: /$2
   spec:
     ingressClassName: nginx
     rules:
@@ -14,4 +16,11 @@
               name: email-api
               port:
                 number: 80
-          path: /api
+          path: /email(/|$)(.*)
+        - pathType: Prefix
+          backend:
+            service:
+              name: email-ui
+              port:
+                number: 80
+          path: /ui(/|$)(.*)
