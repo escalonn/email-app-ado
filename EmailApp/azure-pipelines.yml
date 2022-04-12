@@ -15,10 +15,10 @@ pr:
     - EmailApp
 
 parameters:
-  - name: runAnalysis
-    displayName: Run tests & SonarQube?
-    type: boolean
-    default: false
+- name: runAnalysis
+  displayName: Run tests & SonarQube?
+  type: boolean
+  default: false
 
 variables:
   slnPath: EmailApp
@@ -85,10 +85,9 @@ stages:
       displayName: publish app artifact
       artifact: app
 
-  - job: deploy
+  - job: docker
     ${{ if eq(parameters.runAnalysis, true) }}:
       dependsOn: build
-    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
     pool:
       vmImage: ubuntu-latest
     steps:
@@ -97,15 +96,35 @@ stages:
       inputs:
         containerRegistry: 'docker-hub-escalona'
         repository: 'nicholasescalona/emailapp'
-        command: 'buildAndPush'
+        command: 'build'
         Dockerfile: 'EmailApp/Dockerfile'
         buildContext: 'EmailApp'
         tags: '$(Build.BuildId)'
-
-    - task: KubernetesManifest@0
-      displayName: kubernetes deploy
+    - task: Docker@2
+      condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+      displayName: docker build & push
       inputs:
-        action: 'deploy'
-        kubernetesServiceConnection: 'aks-2204'
-        manifests: 'k8s/*.yml'
-        containers: 'nicholasescalona/emailapp:$(Build.BuildId)'
+        containerRegistry: 'docker-hub-escalona'
+        repository: 'nicholasescalona/emailapp'
+        command: 'push'
+        tags: '$(Build.BuildId)'
+    - publish: k8s
+      artifact: k8s-manifests
+      displayName: publish k8s manifests
+
+- stage: deploy
+  jobs:
+  - deployment: prod
+    pool:
+      vmImage: ubuntu-latest
+    environment: production
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: KubernetesManifest@0
+            displayName: kubernetes deploy
+            inputs:
+              action: 'deploy'
+              manifests: '$(Pipeline.Workspace)/k8s-manifests/*.yml'
+              containers: 'nicholasescalona/emailapp:$(Build.BuildId)'
