@@ -37,7 +37,7 @@ stages:
         packageType: 'sdk'
         version: '6.x'
 
-    for sonar scanner
+    # for sonar scanner
     - task: UseDotNet@2
       displayName: dotnet runtime 3.1
       inputs:
